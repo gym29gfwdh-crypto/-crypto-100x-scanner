@@ -2,180 +2,171 @@
 <html lang="hr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Crypto Asymmetry Scanner</title>
 
 <style>
-
-*{
-    box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
 body{
-    margin:0;
-    background:#080a0f;
-    color:#f5f7fa;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+margin:0;
+background:#080a0f;
+color:#f5f7fa;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif
 }
 
 .container{
-    max-width:850px;
-    margin:auto;
-    padding:20px 14px 50px;
+max-width:850px;
+margin:auto;
+padding:20px 14px 50px
 }
 
 h1{
-    margin:0;
-    font-size:28px;
+margin:0;
+font-size:28px
 }
 
 .subtitle{
-    color:#9299a7;
-    font-size:13px;
-    line-height:1.5;
-    margin:6px 0 18px;
+color:#9299a7;
+font-size:13px;
+line-height:1.5;
+margin:6px 0 18px
 }
 
 .card{
-    background:#141820;
-    border:1px solid #292f39;
-    border-radius:16px;
-    padding:15px;
-    margin:12px 0;
+background:#141820;
+border:1px solid #292f39;
+border-radius:16px;
+padding:15px;
+margin:12px 0
 }
 
 .controls{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:8px;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:8px
 }
 
-select,
-button{
-    width:100%;
-    padding:13px;
-    border-radius:10px;
-    border:1px solid #363d49;
-    background:#0d1118;
-    color:white;
-    font-size:15px;
+select,button{
+width:100%;
+padding:13px;
+border-radius:10px;
+border:1px solid #363d49;
+background:#0d1118;
+color:#fff;
+font-size:15px
 }
 
 button{
-    grid-column:1/-1;
-    background:white;
-    color:black;
-    border:0;
-    font-weight:800;
+grid-column:1/-1;
+background:#fff;
+color:#000;
+border:0;
+font-weight:800
 }
 
 button:disabled{
-    opacity:.5;
+opacity:.5
 }
 
 .status{
-    margin-top:10px;
-    color:#9da6b4;
-    font-size:12px;
+margin-top:10px;
+color:#9da6b4;
+font-size:12px
 }
 
 .best{
-    border-color:#687c42;
+border-color:#687c42
 }
 
 .yellow{
-    color:#fbbf24;
-    font-weight:800;
+color:#fbbf24;
+font-weight:800
 }
 
 .coin{
-    padding:14px 0;
-    border-top:1px solid #292f39;
+padding:14px 0;
+border-top:1px solid #292f39
 }
 
 .coin:first-child{
-    border-top:0;
+border-top:0
 }
 
 .top{
-    display:flex;
-    align-items:center;
-    gap:10px;
+display:flex;
+align-items:center;
+gap:10px
 }
 
 .rank{
-    width:35px;
-    font-size:20px;
-    font-weight:800;
+width:35px;
+font-size:20px;
+font-weight:800
 }
 
 .name{
-    flex:1;
+flex:1
 }
 
 .symbol{
-    color:#8992a1;
-    font-size:12px;
-    margin-top:2px;
+color:#8992a1;
+font-size:12px;
+margin-top:2px
 }
 
 .score{
-    font-size:19px;
-    font-weight:800;
+font-size:19px;
+font-weight:800
 }
 
 .grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:7px;
-    margin-top:10px;
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:7px;
+margin-top:10px
 }
 
 .metric{
-    background:#0d1118;
-    border-radius:9px;
-    padding:9px;
-    color:#929aa8;
-    font-size:11px;
+background:#0d1118;
+border-radius:9px;
+padding:9px;
+color:#929aa8;
+font-size:11px
 }
 
 .metric b{
-    display:block;
-    color:white;
-    font-size:13px;
-    margin-top:3px;
+display:block;
+color:#fff;
+font-size:13px;
+margin-top:3px
 }
 
 .green{
-    color:#6ee7b7!important;
+color:#6ee7b7!important
 }
 
 .red{
-    color:#fb7185!important;
+color:#fb7185!important
 }
 
 .note{
-    color:#aeb6c2;
-    font-size:11px;
-    line-height:1.5;
+color:#aeb6c2;
+font-size:11px;
+line-height:1.5
 }
 
 .error{
-    color:#fb7185;
+color:#fb7185
 }
 
 @media(max-width:450px){
-
-    .grid{
-        grid-template-columns:repeat(2,1fr);
-    }
-
+.grid{
+grid-template-columns:repeat(2,1fr)
 }
-
+}
 </style>
 </head>
-
 
 <body>
 
@@ -184,68 +175,29 @@ button:disabled{
 <h1>Crypto Asymmetry Scanner</h1>
 
 <div class="subtitle">
-Skenira tržište i rangira kriptovalute prema potencijalu za odabrani višekratnik.
-Model koristi momentum, market cap, volumen, ATH udaljenost i FDV.
+Skenira tržište i traži kriptovalute s najboljim omjerom potencijala i rizika za odabrani cilj.
 </div>
-
 
 <div class="card">
 
 <div class="controls">
 
 <select id="target">
-
-<option value="2">
-Cilj 2×
-</option>
-
-<option value="5">
-Cilj 5×
-</option>
-
-<option value="10">
-Cilj 10×
-</option>
-
-<option value="20" selected>
-Cilj 20×
-</option>
-
-<option value="50">
-Cilj 50×
-</option>
-
-<option value="100">
-Cilj 100×
-</option>
-
+<option value="2">Cilj 2×</option>
+<option value="5">Cilj 5×</option>
+<option value="10">Cilj 10×</option>
+<option value="20" selected>Cilj 20×</option>
+<option value="50">Cilj 50×</option>
+<option value="100">Cilj 100×</option>
 </select>
-
 
 <select id="amount">
-
-<option value="250">
-250 coina
-</option>
-
-<option value="500">
-500 coina
-</option>
-
-<option value="1000" selected>
-1000 coina
-</option>
-
-<option value="2000">
-2000 coina
-</option>
-
-<option value="2500">
-2500 coina
-</option>
-
+<option value="250">250 coina</option>
+<option value="500">500 coina</option>
+<option value="1000" selected>1000 coina</option>
+<option value="2000">2000 coina</option>
+<option value="2500">2500 coina</option>
 </select>
-
 
 <button id="scanButton" onclick="scan()">
 SKENIRAJ TRŽIŠTE
@@ -253,1105 +205,862 @@ SKENIRAJ TRŽIŠTE
 
 </div>
 
-
 <div id="status" class="status">
 Spremno za skeniranje.
 </div>
 
 </div>
 
-
 <div id="results"></div>
-
 
 <div class="card note">
 
-<b>Kako model radi</b>
+<b>Model analizira:</b><br><br>
+
+7d · 14d · 30d · 200d · 1y momentum<br>
+Market cap<br>
+Ciljani market cap<br>
+24h volumen<br>
+Volumen / market cap<br>
+ATH udaljenost<br>
+FDV / market cap<br>
+Kratkoročni pump penalty
 
 <br><br>
 
-Score nije postotak vjerojatnosti.
-
-Model uspoređuje:
-
-<br><br>
-
-• 7 dana<br>
-• 14 dana<br>
-• 30 dana<br>
-• 200 dana<br>
-• 1 godina<br>
-• market cap<br>
-• potreban market cap za cilj<br>
-• 24h volumen<br>
-• volumen / market cap<br>
-• udaljenost od ATH-a<br>
-• FDV / market cap<br>
-• kratkoročni pump
-
-<br><br>
-
-Primjer: ako coin ima market cap od 20 M$,
-za 20× bi morao doći približno do 400 M$ market capa.
+Score je rang modela, a ne postotak vjerojatnosti.
 
 </div>
 
 </div>
-
 
 <script>
 
-
 const API =
 "https://api.coingecko.com/api/v3/";
-
 
 const $ =
 id => document.getElementById(id);
 
 
 function sleep(ms){
-
-    return new Promise(
-        resolve => setTimeout(resolve,ms)
-    );
-
+return new Promise(resolve=>setTimeout(resolve,ms));
 }
 
 
 async function api(url){
 
-    const response =
-        await fetch(url);
+const response =
+await fetch(url);
 
-    if(!response.ok){
+if(!response.ok){
 
-        throw new Error(
-            "CoinGecko API HTTP " +
-            response.status
-        );
+throw new Error(
+"CoinGecko API HTTP "+
+response.status
+);
 
-    }
+}
 
-    return response.json();
+return response.json();
 
 }
 
 
 function money(value){
 
-    if(!Number.isFinite(value))
-        return "—";
+if(!Number.isFinite(value))
+return "—";
 
-    if(value >= 1e12)
-        return "$" +
-        (value/1e12).toFixed(2) +
-        "T";
+if(value>=1e12)
+return "$"+(value/1e12).toFixed(2)+"T";
 
-    if(value >= 1e9)
-        return "$" +
-        (value/1e9).toFixed(2) +
-        "B";
+if(value>=1e9)
+return "$"+(value/1e9).toFixed(2)+"B";
 
-    if(value >= 1e6)
-        return "$" +
-        (value/1e6).toFixed(1) +
-        "M";
+if(value>=1e6)
+return "$"+(value/1e6).toFixed(1)+"M";
 
-    if(value >= 1e3)
-        return "$" +
-        (value/1e3).toFixed(1) +
-        "K";
+if(value>=1e3)
+return "$"+(value/1e3).toFixed(1)+"K";
 
-    return "$" +
-    value.toFixed(2);
+return "$"+value.toFixed(2);
 
 }
 
 
 function percent(value){
 
-    if(!Number.isFinite(value))
-        return "—";
+if(!Number.isFinite(value))
+return "—";
 
-    return (
-        value * 100
-    ).toFixed(1) + "%";
+return (value*100).toFixed(1)+"%";
 
 }
 
 
-function clamp(
-    value,
-    min=0,
-    max=1
-){
+function clamp(value,min=0,max=1){
 
-    return Math.max(
-        min,
-        Math.min(max,value)
-    );
+return Math.max(
+min,
+Math.min(max,value)
+);
 
 }
 
 
-function percentile(
-    values,
-    value
-){
+function percentile(values,value){
 
-    const valid =
-        values
-        .filter(
-            x => Number.isFinite(x)
-        )
-        .sort(
-            (a,b) => a-b
-        );
+const valid =
+values
+.filter(Number.isFinite)
+.sort((a,b)=>a-b);
 
-    if(!valid.length)
-        return 0.5;
+if(!valid.length)
+return .5;
 
-    let count=0;
+let count=0;
 
-    for(
-        const x of valid
-    ){
+for(const x of valid){
 
-        if(x <= value)
-            count++;
+if(x<=value)
+count++;
 
-    }
+}
 
-    return count /
-    valid.length;
+return count/valid.length;
 
 }
 
 
-function change(
-    coin,
-    period
-){
+function change(coin,period){
 
-    const key =
-        "price_change_percentage_" +
-        period +
-        "_in_currency";
+const key =
+"price_change_percentage_"+
+period+
+"_in_currency";
 
-    return coin[key] ?? NaN;
+return coin[key] ?? NaN;
 
 }
 
 
-/*
-------------------------------------------------
-CALCULATE SCORE
-------------------------------------------------
-*/
+/* =========================
+   SCORE
+========================= */
 
 function calculateScore(
-    item,
-    all,
-    target
+item,
+all,
+target
 ){
 
-    const q7 =
-        percentile(
-            all.map(x=>x.r7),
-            item.r7
-        );
+const q7 =
+percentile(
+all.map(x=>x.r7),
+item.r7
+);
+
+const q14 =
+percentile(
+all.map(x=>x.r14),
+item.r14
+);
+
+const q30 =
+percentile(
+all.map(x=>x.r30),
+item.r30
+);
+
+const q200 =
+percentile(
+all.map(x=>x.r200),
+item.r200
+);
+
+const q1 =
+percentile(
+all.map(x=>x.r1),
+item.r1
+);
+
+
+/*
+Momentum
+*/
+
+const momentum =
 
-    const q14 =
-        percentile(
-            all.map(x=>x.r14),
-            item.r14
-        );
+q7*.10+
+q14*.15+
+q30*.25+
+q200*.25+
+q1*.25;
+
+
+/*
+Market cap koji bi bio potreban
+za ciljani višekratnik.
+*/
+
+item.targetMarketCap =
+item.marketCap*target;
+
+
+/*
+Manji potreban market cap
+je povoljniji.
+*/
+
+const capScore =
+
+clamp(
+1-
+Math.log10(
+Math.max(
+item.targetMarketCap,
+1
+)
+)/13
+);
+
+
+/*
+Likvidnost.
+*/
+
+const liquidity =
+
+clamp(
+Math.log10(
+Math.max(
+item.volume,
+1
+)
+)/10
+);
+
+
+/*
+Volumen u odnosu
+na market cap.
+*/
+
+const volumeRatio =
+
+clamp(
+item.volume/
+Math.max(
+item.marketCap,
+1
+),
+0,
+2
+)/2;
 
-    const q30 =
-        percentile(
-            all.map(x=>x.r30),
-            item.r30
-        );
 
-    const q200 =
-        percentile(
-            all.map(x=>x.r200),
-            item.r200
-        );
+/*
+ATH.
 
-    const q1 =
-        percentile(
-            all.map(x=>x.r1),
-            item.r1
-        );
+Daleko ispod ATH-a
+nije automatski bullish.
+*/
 
+const athScore =
 
-    /*
-    Momentum
-    */
+clamp(
+1-
+Math.abs(
+Math.min(
+item.ath,
+0
+)
+)/100
+);
 
-    const momentum =
 
-        q7  * 0.10 +
+/*
+FDV penalty.
+*/
 
-        q14 * 0.15 +
+let fdvPenalty=0;
 
-        q30 * 0.25 +
+if(item.fdv>0){
 
-        q200 * 0.25 +
+fdvPenalty=
 
-        q1 * 0.25;
-
-
-    /*
-    Market-cap izvedivost
-    */
-
-    const targetMarketCap =
-        item.marketCap * target;
-
-
-    const marketCapScore =
-
-        clamp(
-
-            1 -
-
-            (
-                Math.log10(
-                    Math.max(
-                        targetMarketCap,
-                        1
-                    )
-                ) / 13
-            )
-
-        );
-
-
-    /*
-    Likvidnost
-    */
-
-    const liquidity =
-
-        clamp(
-
-            Math.log10(
-                Math.max(
-                    item.volume,
-                    1
-                )
-            ) / 10
-
-        );
-
-
-    /*
-    Volumen u odnosu na market cap
-    */
-
-    const volumeRatio =
-
-        clamp(
-
-            item.volume /
-            Math.max(
-                item.marketCap,
-                1
-            ),
-
-            0,
-            2
-
-        ) / 2;
-
-
-    /*
-    ATH score
-
-    Coin daleko ispod ATH-a
-    nije automatski dobar.
-    Zato je težina ograničena.
-    */
-
-    const athScore =
-
-        clamp(
-
-            1 -
-
-            Math.abs(
-                Math.min(
-                    item.ath,
-                    0
-                )
-            ) / 100
-
-        );
-
-
-    /*
-    FDV penalty
-    */
-
-    let fdvPenalty=0;
-
-    if(item.fdv > 0){
-
-        fdvPenalty =
-
-            clamp(
-
-                (
-                    item.fdv /
-                    item.marketCap
-                    - 1
-                ) / 8
-
-            );
-
-    }
-
-
-    /*
-    Pump penalty
-
-    Ne želimo automatski kupovati
-    ono što je upravo napravilo +300%.
-    */
-
-    let pumpPenalty=0;
-
-    if(item.r7 > 1){
-
-        pumpPenalty =
-
-            clamp(
-                (item.r7-1)/3
-            ) * 0.10;
-
-    }
-
-
-    /*
-    FINAL SCORE
-    */
-
-    item.score =
-
-        100 * (
-
-            momentum * 0.38 +
-
-            marketCapScore * 0.18 +
-
-            volumeRatio * 0.14 +
-
-            liquidity * 0.10 +
-
-            athScore * 0.10 +
-
-            (1-fdvPenalty) * 0.10
-
-        )
-
-        -
-
-        100 * pumpPenalty;
-
-
-    item.score =
-        clamp(
-            item.score,
-            0,
-            100
-        );
+clamp(
+(
+item.fdv/
+item.marketCap-1
+)/8
+);
 
 }
 
 
 /*
-------------------------------------------------
-SCAN
-------------------------------------------------
+Ako je coin upravo
+napravio ogroman pump,
+smanjujemo score.
 */
+
+let pumpPenalty=0;
+
+if(item.r7>1){
+
+pumpPenalty=
+
+clamp(
+(item.r7-1)/3
+)*.10;
+
+}
+
+
+/*
+FINAL SCORE
+*/
+
+item.score=
+
+100*(
+
+momentum*.38+
+
+capScore*.18+
+
+volumeRatio*.14+
+
+liquidity*.10+
+
+athScore*.10+
+
+(1-fdvPenalty)*.10
+
+)
+
+-
+
+100*pumpPenalty;
+
+
+item.score=
+clamp(
+item.score,
+0,
+100
+);
+
+}
+
+
+/* =========================
+   SCAN
+========================= */
 
 async function scan(){
 
-    const target =
-        Number(
-            $("target").value
-        );
+const target=
+Number(
+$("target").value
+);
 
+const requested=
+Number(
+$("amount").value
+);
 
-    const requested =
-        Number(
-            $("amount").value
-        );
+const button=
+$("scanButton");
 
+button.disabled=true;
 
-    const button =
-        $("scanButton");
+$("status").textContent=
+"Dohvaćam tržište...";
 
+$("results").innerHTML=
+'<div class="card">Skeniranje...</div>';
 
-    button.disabled=true;
 
+try{
 
-    $("status").textContent =
-        "Dohvaćam tržište...";
+let coins=[];
 
+const pages=
+Math.ceil(
+requested/250
+);
 
-    $("results").innerHTML =
 
-        '<div class="card">' +
-        'Skeniranje u tijeku...' +
-        '</div>';
+/*
+250 coina po API pozivu.
+*/
 
+for(
+let page=1;
+page<=pages;
+page++
+){
 
-    try{
+const amount=
+Math.min(
+250,
+requested-coins.length
+);
 
-        let coins=[];
 
+const url=
 
-        const pages =
-            Math.ceil(
-                requested / 250
-            );
+API+
+"coins/markets"+
+"?vs_currency=usd"+
+"&order=market_cap_desc"+
+"&per_page="+amount+
+"&page="+page+
+"&sparkline=false"+
+"&price_change_percentage="+
+"7d,14d,30d,200d,1y";
 
 
-        /*
-        Dohvati market podatke.
+const data=
+await api(url);
 
-        CoinGecko endpoint može vratiti
-        do 250 coina po zahtjevu.
-        */
 
-        for(
-            let page=1;
-            page<=pages;
-            page++
-        ){
+coins.push(...data);
 
-            const amount =
-                Math.min(
-                    250,
-                    requested -
-                    coins.length
-                );
 
+$("status").textContent=
+"Dohvaćeno "+
+coins.length+
+" / "+
+requested;
 
-            const url =
 
-                API +
+if(data.length<amount)
+break;
 
-                "coins/markets" +
 
-                "?vs_currency=usd" +
-
-                "&order=market_cap_desc" +
-
-                "&per_page=" +
-                amount +
-
-                "&page=" +
-                page +
-
-                "&sparkline=false" +
-
-                "&price_change_percentage=" +
-
-                "7d,14d,30d,200d,1y";
-
-
-            const data =
-                await api(url);
-
-
-            coins.push(
-                ...data
-            );
-
-
-            $("status").textContent =
-
-                "Dohvaćeno " +
-
-                coins.length +
-
-                " / " +
-
-                requested;
-
-
-            if(
-                data.length <
-                amount
-            ){
-
-                break;
-
-            }
-
-
-            await sleep(1500);
-
-        }
-
-
-        /*
-        Pripremi podatke.
-        */
-
-        let analysed =
-
-            coins
-
-            .filter(
-                coin =>
-
-                coin.market_cap > 0 &&
-
-                coin.current_price > 0
-            )
-
-            .map(
-                coin => ({
-
-                    coin:coin,
-
-                    marketCap:
-                        coin.market_cap,
-
-                    volume:
-                        coin.total_volume || 0,
-
-                    fdv:
-                        coin.fully_diluted_valuation || 0,
-
-                    ath:
-                        coin.ath_change_percentage ??
-                        NaN,
-
-                    r7:
-                        change(
-                            coin,
-                            "7d"
-                        ),
-
-                    r14:
-                        change(
-                            coin,
-                            "14d"
-                        ),
-
-                    r30:
-                        change(
-                            coin,
-                            "30d"
-                        ),
-
-                    r200:
-                        change(
-                            coin,
-                            "200d"
-                        ),
-
-                    r1:
-                        change(
-                            coin,
-                            "1y"
-                        )
-
-                })
-            );
-
-
-        /*
-        Izračun scorea.
-        */
-
-        analysed.forEach(
-            item =>
-
-            calculateScore(
-                item,
-                analysed,
-                target
-            )
-        );
-
-
-        /*
-        Najbolji prvi.
-        */
-
-        analysed.sort(
-            (a,b) =>
-                b.score -
-                a.score
-        );
-
-
-        render(
-            analysed.slice(0,25),
-            target,
-            analysed.length
-        );
-
-
-        $("status").textContent =
-
-            "Gotovo — " +
-
-            analysed.length +
-
-            " coina analizirano.";
-
-
-    }
-    catch(error){
-
-        console.error(error);
-
-
-        $("status").innerHTML =
-
-            '<span class="error">' +
-
-            "Greška: " +
-
-            error.message +
-
-            "</span>";
-
-
-        $("results").innerHTML =
-
-            '<div class="card error">' +
-
-            "<b>CoinGecko nije dopustio zahtjev.</b>" +
-
-            "<br><br>" +
-
-            "Mogući razlog je API rate limit." +
-
-            "<br><br>" +
-
-            "Pokušaj ponovno nakon kratkog vremena." +
-
-            "</div>";
-
-    }
-
-
-    button.disabled=false;
+await sleep(1500);
 
 }
 
 
 /*
-------------------------------------------------
-RENDER
-------------------------------------------------
+Pretvaranje u podatke
+za model.
 */
 
+let analysed=
+
+coins
+
+.filter(
+coin=>
+coin.market_cap>0 &&
+coin.current_price>0
+)
+
+.map(
+coin=>({
+
+coin,
+
+marketCap:
+coin.market_cap,
+
+volume:
+coin.total_volume||0,
+
+fdv:
+coin.fully_diluted_valuation||0,
+
+ath:
+coin.ath_change_percentage??NaN,
+
+r7:
+change(coin,"7d"),
+
+r14:
+change(coin,"14d"),
+
+r30:
+change(coin,"30d"),
+
+r200:
+change(coin,"200d"),
+
+r1:
+change(coin,"1y")
+
+})
+);
+
+
+/*
+Izračun.
+*/
+
+analysed.forEach(
+item=>
+calculateScore(
+item,
+analysed,
+target
+)
+);
+
+
+/*
+Najbolji prvi.
+*/
+
+analysed.sort(
+(a,b)=>
+b.score-a.score
+);
+
+
+/*
+Prikaži rezultate.
+*/
+
+render(
+analysed.slice(0,25),
+target,
+analysed.length
+);
+
+
+$("status").textContent=
+"Gotovo — "+
+analysed.length+
+" coina analizirano.";
+
+}
+
+catch(error){
+
+console.error(error);
+
+$("status").innerHTML=
+'<span class="error">'+
+"Greška: "+
+error.message+
+"</span>";
+
+
+$("results").innerHTML=
+
+'<div class="card error">'+
+
+"<b>CoinGecko nije dopustio zahtjev.</b>"+
+
+"<br><br>"+
+
+"Mogući razlog je API rate limit."+
+
+"<br><br>"+
+
+"Pričekaj malo i pokušaj ponovno."+
+
+"</div>";
+
+}
+
+button.disabled=false;
+
+}
+
+
+/* =========================
+   RESULTS
+========================= */
+
 function render(
-    list,
-    target,
-    total
+list,
+target,
+total
 ){
 
-    if(!list.length){
+if(!list.length){
 
-        $("results").innerHTML =
+$("results").innerHTML=
+'<div class="card">Nema podataka.</div>';
 
-            '<div class="card">' +
+return;
 
-            "Nema dostupnih podataka." +
+}
 
-            "</div>";
 
-        return;
+const best=
+list[0];
 
-    }
 
+let html=`
 
-    const best =
-        list[0];
+<div class="card best">
 
+<div class="yellow">
 
-    let html = "";
+#1 KANDIDAT ZA ${target}×
 
+</div>
 
-    /*
-    BEST
-    */
+<div class="coin">
 
-    html += `
+<div class="top">
 
-    <div class="card best">
+<div class="rank">
+#1
+</div>
 
-        <div class="yellow">
+<div class="name">
 
-            #1 KANDIDAT ZA ${target}×
+<b>
+${best.coin.name}
+</b>
 
-        </div>
+<div class="symbol">
+${best.coin.symbol.toUpperCase()}
+</div>
 
+</div>
 
-        <div class="coin">
+<div class="score">
+${best.score.toFixed(1)}
+</div>
 
-            <div class="top">
+</div>
 
-                <div class="rank">
-                    #1
-                </div>
 
+<div class="grid">
 
-                <div class="name">
+<div class="metric">
+Market cap
+<b>
+${money(best.marketCap)}
+</b>
+</div>
 
-                    <b>
-                        ${best.coin.name}
-                    </b>
+<div class="metric">
+${target}× market cap
+<b>
+${money(best.targetMarketCap)}
+</b>
+</div>
 
-                    <div class="symbol">
+<div class="metric">
+ATH
+<b>
+${percent(best.ath)}
+</b>
+</div>
 
-                        ${best.coin.symbol.toUpperCase()}
+<div class="metric">
+7 dana
+<b class="${
+best.r7>=0
+?"green"
+:"red"
+}">
+${percent(best.r7)}
+</b>
+</div>
 
-                    </div>
+<div class="metric">
+30 dana
+<b class="${
+best.r30>=0
+?"green"
+:"red"
+}">
+${percent(best.r30)}
+</b>
+</div>
 
-                </div>
+<div class="metric">
+1 godina
+<b class="${
+best.r1>=0
+?"green"
+:"red"
+}">
+${percent(best.r1)}
+</b>
+</div>
 
+</div>
 
-                <div class="score">
+</div>
 
-                    ${best.score.toFixed(1)}
+</div>
 
-                </div>
 
-            </div>
+<div class="card">
 
+<b>
+TOP 25 KANDIDATA
+</b>
 
-            <div class="grid">
+`;
 
-                <div class="metric">
 
-                    Market cap
+list.forEach(
+(item,index)=>{
 
-                    <b>
-                        ${money(best.marketCap)}
-                    </b>
+const fdvRatio=
 
-                </div>
+item.fdv>0
 
+?
 
-                <div class="metric">
+(
+item.fdv/
+item.marketCap
+).toFixed(2)+"×"
 
-                    ${target}× market cap
+:
 
-                    <b>
-                        ${money(
-                            best.marketCap *
-                            target
-                        )}
-                    </b>
+"—";
 
-                </div>
 
+html+=`
 
-                <div class="metric">
+<div class="coin">
 
-                    ATH
+<div class="top">
 
-                    <b>
-                        ${percent(best.ath)}
-                    </b>
+<div class="rank">
+#${index+1}
+</div>
 
-                </div>
+<div class="name">
 
+<b>
+${item.coin.name}
+</b>
 
-                <div class="metric">
+<div class="symbol">
 
-                    7 dana
+${item.coin.symbol.toUpperCase()}
 
-                    <b class="${
-                        best.r7 >= 0
-                        ? "green"
-                        : "red"
-                    }">
+·
 
-                        ${percent(best.r7)}
+${money(item.marketCap)}
 
-                    </b>
+</div>
 
-                </div>
+</div>
 
+<div class="score">
 
-                <div class="metric">
+${item.score.toFixed(1)}
 
-                    30 dana
+</div>
 
-                    <b class="${
-                        best.r30 >= 0
-                        ? "green"
-                        : "red"
-                    }">
+</div>
 
-                        ${percent(best.r30)}
 
-                    </b>
+<div class="grid">
 
-                </div>
+<div class="metric">
+7d
+<b class="${
+item.r7>=0
+?"green"
+:"red"
+}">
+${percent(item.r7)}
+</b>
+</div>
 
+<div class="metric">
+30d
+<b class="${
+item.r30>=0
+?"green"
+:"red"
+}">
+${percent(item.r30)}
+</b>
+</div>
 
-                <div class="metric">
+<div class="metric">
+200d
+<b class="${
+item.r200>=0
+?"green"
+:"red"
+}">
+${percent(item.r200)}
+</b>
+</div>
 
-                    1 godina
+<div class="metric">
+1y
+<b class="${
+item.r1>=0
+?"green"
+:"red"
+}">
+${percent(item.r1)}
+</b>
+</div>
 
-                    <b class="${
-                        best.r1 >= 0
-                        ? "green"
-                        : "red"
-                    }">
+<div class="metric">
+${target}× MC
+<b>
+${money(item.targetMarketCap)}
+</b>
+</div>
 
-                        ${percent(best.r1)}
+<div class="metric">
+FDV / MC
+<b>
+${fdvRatio}
+</b>
+</div>
 
-                    </b>
+</div>
 
-                </div>
+</div>
 
-            </div>
+`;
 
-        </div>
+});
 
-    </div>
 
+html+=`
 
-    <div class="card">
+</div>
 
-        <b>
-            TOP 25 KANDIDATA
-        </b>
 
-    `;
+<div class="card note">
 
+Analizirano:
 
-    /*
-    TOP 25
-    */
+<b>
+${total}
+</b>
 
-    list.forEach(
-        (item,index) => {
+coina.
 
-            const fdvRatio =
+<br><br>
 
-                item.fdv > 0
+Score je rang modela.
+Nije postotak šanse i nije
+jamstvo da će coin dosegnuti
+odabrani višekratnik.
 
-                ?
+</div>
 
-                (
-                    item.fdv /
-                    item.marketCap
-                ).toFixed(2) + "×"
+`;
 
-                :
 
-                "—";
-
-
-            html += `
-
-            <div class="coin">
-
-                <div class="top">
-
-                    <div class="rank">
-
-                        #${index+1}
-
-                    </div>
-
-
-                    <div class="name">
-
-                        <b>
-
-                            ${item.coin.name}
-
-                        </b>
-
-
-                        <div class="symbol">
-
-                            ${item.coin.symbol.toUpperCase()}
-
-                            ·
-
-                            ${money(
-                                item.marketCap
-                            )}
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="score">
-
-                        ${item.score.toFixed(1)}
-
-                    </div>
-
-                </div>
-
-
-                <div class="grid">
-
-
-                    <div class="metric">
-
-                        7d
-
-                        <b class="${
-                            item.r7 >= 0
-                            ? "green"
-                            : "red"
-                        }">
-
-                            ${percent(
-                                item.r7
-                            )}
-
-                        </b>
-
-                    </div>
-
-
-                    <div class="metric">
-
-                        30d
-
-                        <b class="${
-                            item.r30 >= 0
-                            ? "green"
-                            : "red"
-                        }">
-
-                            ${percent(
-                                item.r30
-                            )}
-
-                        </b>
-
-                    </div>
-
-
-                    <div class="metric">
-
-                        200d
-
-                        <b class="${
-                            item.r200 >= 0
-                            ? "green"
-                            : "red"
-                        }">
-
-                            ${percent(
-                                item.r200
-                            )}
-
-                        </b>
-
-                    </div>
-
-
-                    <div class="metric">
-
-                        1y
-
-                        <b class="${
-                            item.r1 >= 0
-                            ? "green"
-                            : "red"
-                        }">
-
-                            ${percent(
-                                item.r1
-                            )}
-
-                        </b>
-
-                    </div>
-
-
-                    <div class="metric">
-
-                        ${target}× MC
-
-                        <b>
-
-                            ${money(
-                                item.marketCap *
-                                target
-                            )}
-
-                        </b>
-
-                    </div>
-
-
-                    <div class="metric">
-
-                        FDV / MC
-
-                        <b>
-
-                            ${fdvRatio}
-
-                        </b>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            `;
-
-        }
-    );
-
-
-    html += `
-
-    </div>
-
-
-    <div class="card note">
-
-        Analizirano:
-
-        <b>
-            ${total}
-        </b>
-
-        coina.
-
-        <br><br>
-
-        Score je rang modela, a ne
-        postotak vjerojatnosti.
-        Visoki score ne znači da će
-        coin dosegnuti cilj.
-
-    </div>
-
-    `;
-
-
-    $("results").innerHTML =
-        html;
+$("results").innerHTML=
+html;
 
 }
 
