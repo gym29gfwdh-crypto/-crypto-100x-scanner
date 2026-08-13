@@ -1,22 +1,26 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="hr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Crypto 100X Scanner</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Crypto Asymmetry Scanner</title>
 
 <style>
-*{box-sizing:border-box}
+
+*{
+    box-sizing:border-box;
+}
 
 body{
     margin:0;
-    background:#090b10;
+    background:#080a0f;
     color:#f5f7fa;
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
 
-.wrap{
-    max-width:760px;
+.container{
+    max-width:850px;
     margin:auto;
     padding:20px 14px 50px;
 }
@@ -29,13 +33,13 @@ h1{
 .subtitle{
     color:#9299a7;
     font-size:13px;
-    margin-top:5px;
-    margin-bottom:18px;
+    line-height:1.5;
+    margin:6px 0 18px;
 }
 
 .card{
     background:#141820;
-    border:1px solid #272d38;
+    border:1px solid #292f39;
     border-radius:16px;
     padding:15px;
     margin:12px 0;
@@ -47,33 +51,47 @@ h1{
     gap:8px;
 }
 
-input,select,button{
+select,
+button{
     width:100%;
-    padding:12px;
+    padding:13px;
     border-radius:10px;
-    border:1px solid #343b49;
-    background:#0e1219;
-    color:#fff;
+    border:1px solid #363d49;
+    background:#0d1118;
+    color:white;
     font-size:15px;
 }
 
 button{
     grid-column:1/-1;
-    background:#fff;
-    color:#000;
+    background:white;
+    color:black;
     border:0;
     font-weight:800;
 }
 
+button:disabled{
+    opacity:.5;
+}
+
 .status{
     margin-top:10px;
-    color:#9ca3af;
+    color:#9da6b4;
     font-size:12px;
 }
 
+.best{
+    border-color:#687c42;
+}
+
+.yellow{
+    color:#fbbf24;
+    font-weight:800;
+}
+
 .coin{
-    border-top:1px solid #272d38;
     padding:14px 0;
+    border-top:1px solid #292f39;
 }
 
 .coin:first-child{
@@ -87,7 +105,7 @@ button{
 }
 
 .rank{
-    width:32px;
+    width:35px;
     font-size:20px;
     font-weight:800;
 }
@@ -97,7 +115,7 @@ button{
 }
 
 .symbol{
-    color:#8e96a5;
+    color:#8992a1;
     font-size:12px;
     margin-top:2px;
 }
@@ -115,16 +133,16 @@ button{
 }
 
 .metric{
-    background:#0e1219;
+    background:#0d1118;
     border-radius:9px;
-    padding:8px;
+    padding:9px;
     color:#929aa8;
     font-size:11px;
 }
 
 .metric b{
     display:block;
-    color:#fff;
+    color:white;
     font-size:13px;
     margin-top:3px;
 }
@@ -137,67 +155,104 @@ button{
     color:#fb7185!important;
 }
 
-.yellow{
-    color:#fbbf24!important;
+.note{
+    color:#aeb6c2;
+    font-size:11px;
+    line-height:1.5;
 }
 
-.loading{
-    text-align:center;
-    padding:25px;
-    color:#a4acba;
+.error{
+    color:#fb7185;
 }
 
-.warning{
-    color:#fbbf24;
-    font-size:12px;
-    line-height:1.45;
-}
+@media(max-width:450px){
 
-.best{
-    border:1px solid #596d36;
-}
-
-@media(max-width:430px){
     .grid{
         grid-template-columns:repeat(2,1fr);
     }
+
 }
+
 </style>
 </head>
 
+
 <body>
 
-<div class="wrap">
+<div class="container">
 
-<h1>Crypto 100× Scanner</h1>
+<h1>Crypto Asymmetry Scanner</h1>
 
 <div class="subtitle">
-Automatski traži kriptovalute s najboljim omjerom potencijalnog upsidea i povijesnih karakteristika.
+Skenira tržište i rangira kriptovalute prema potencijalu za odabrani višekratnik.
+Model koristi momentum, market cap, volumen, ATH udaljenost i FDV.
 </div>
+
 
 <div class="card">
 
 <div class="controls">
 
-<input
-id="limit"
-type="number"
-min="20"
-max="250"
-value="100"
-placeholder="Broj coinova">
+<select id="target">
 
-<select id="mult">
-<option value="10">Cilj 10×</option>
-<option value="50">Cilj 50×</option>
-<option value="100" selected>Cilj 100×</option>
+<option value="2">
+Cilj 2×
+</option>
+
+<option value="5">
+Cilj 5×
+</option>
+
+<option value="10">
+Cilj 10×
+</option>
+
+<option value="20" selected>
+Cilj 20×
+</option>
+
+<option value="50">
+Cilj 50×
+</option>
+
+<option value="100">
+Cilj 100×
+</option>
+
 </select>
 
-<button onclick="scan()">
+
+<select id="amount">
+
+<option value="250">
+250 coina
+</option>
+
+<option value="500">
+500 coina
+</option>
+
+<option value="1000" selected>
+1000 coina
+</option>
+
+<option value="2000">
+2000 coina
+</option>
+
+<option value="2500">
+2500 coina
+</option>
+
+</select>
+
+
+<button id="scanButton" onclick="scan()">
 SKENIRAJ TRŽIŠTE
 </button>
 
 </div>
+
 
 <div id="status" class="status">
 Spremno za skeniranje.
@@ -205,48 +260,81 @@ Spremno za skeniranje.
 
 </div>
 
-<div id="result"></div>
 
-<div class="card warning">
+<div id="results"></div>
 
-<b>Važno</b><br><br>
 
-Score nije vjerojatnost da će coin napraviti 100×.
-Model uspoređuje povijesni momentum, trend, drawdown,
-volatilnost, oporavak od ATH-a, volumen i market cap.
+<div class="card note">
 
-100× zahtijeva približno 100× veći market cap.
+<b>Kako model radi</b>
+
+<br><br>
+
+Score nije postotak vjerojatnosti.
+
+Model uspoređuje:
+
+<br><br>
+
+• 7 dana<br>
+• 14 dana<br>
+• 30 dana<br>
+• 200 dana<br>
+• 1 godina<br>
+• market cap<br>
+• potreban market cap za cilj<br>
+• 24h volumen<br>
+• volumen / market cap<br>
+• udaljenost od ATH-a<br>
+• FDV / market cap<br>
+• kratkoročni pump
+
+<br><br>
+
+Primjer: ako coin ima market cap od 20 M$,
+za 20× bi morao doći približno do 400 M$ market capa.
 
 </div>
 
 </div>
+
 
 <script>
 
-const $ = id => document.getElementById(id);
 
-const sleep = ms =>
-    new Promise(resolve => setTimeout(resolve,ms));
+const API =
+"https://api.coingecko.com/api/v3/";
+
+
+const $ =
+id => document.getElementById(id);
+
+
+function sleep(ms){
+
+    return new Promise(
+        resolve => setTimeout(resolve,ms)
+    );
+
+}
 
 
 async function api(url){
 
-    const response = await fetch(url);
+    const response =
+        await fetch(url);
 
     if(!response.ok){
-        throw new Error("CoinGecko API: " + response.status);
+
+        throw new Error(
+            "CoinGecko API HTTP " +
+            response.status
+        );
+
     }
 
     return response.json();
-}
 
-
-function percentage(value){
-
-    if(!Number.isFinite(value))
-        return "—";
-
-    return (value * 100).toFixed(1) + "%";
 }
 
 
@@ -256,466 +344,637 @@ function money(value){
         return "—";
 
     if(value >= 1e12)
-        return "$" + (value/1e12).toFixed(2) + "T";
+        return "$" +
+        (value/1e12).toFixed(2) +
+        "T";
 
     if(value >= 1e9)
-        return "$" + (value/1e9).toFixed(2) + "B";
+        return "$" +
+        (value/1e9).toFixed(2) +
+        "B";
 
     if(value >= 1e6)
-        return "$" + (value/1e6).toFixed(1) + "M";
+        return "$" +
+        (value/1e6).toFixed(1) +
+        "M";
 
     if(value >= 1e3)
-        return "$" + (value/1e3).toFixed(1) + "K";
+        return "$" +
+        (value/1e3).toFixed(1) +
+        "K";
 
-    return "$" + value.toFixed(2);
+    return "$" +
+    value.toFixed(2);
+
 }
 
 
-function returnN(prices,n){
+function percent(value){
 
-    if(prices.length <= n)
-        return NaN;
+    if(!Number.isFinite(value))
+        return "—";
 
-    return prices[prices.length-1] /
-           prices[prices.length-1-n] - 1;
+    return (
+        value * 100
+    ).toFixed(1) + "%";
+
 }
 
 
-function maximumDrawdown(prices){
+function clamp(
+    value,
+    min=0,
+    max=1
+){
 
-    let peak = prices[0];
-    let drawdown = 0;
+    return Math.max(
+        min,
+        Math.min(max,value)
+    );
 
-    for(const price of prices){
-
-        peak = Math.max(peak,price);
-
-        drawdown =
-            Math.min(
-                drawdown,
-                price / peak - 1
-            );
-    }
-
-    return drawdown;
 }
 
 
-function volatility(prices){
-
-    if(prices.length < 20)
-        return NaN;
-
-    const returns = [];
-
-    for(let i=1;i<prices.length;i++){
-
-        returns.push(
-            Math.log(
-                prices[i] / prices[i-1]
-            )
-        );
-    }
-
-    const mean =
-        returns.reduce((a,b)=>a+b,0) /
-        returns.length;
-
-    const variance =
-        returns.reduce(
-            (sum,x)=>sum+(x-mean)**2,
-            0
-        ) /
-        (returns.length-1);
-
-    return Math.sqrt(variance*365);
-}
-
-
-function ema(prices,period){
-
-    const multiplier =
-        2/(period+1);
-
-    let value = prices[0];
-
-    for(let i=1;i<prices.length;i++){
-
-        value =
-            prices[i]*multiplier +
-            value*(1-multiplier);
-    }
-
-    return value;
-}
-
-
-function trend(prices){
-
-    if(prices.length < 120)
-        return NaN;
-
-    const data =
-        prices.slice(-120);
-
-    const fast =
-        ema(data,30);
-
-    const slow =
-        ema(data,120);
-
-    return fast/slow - 1;
-}
-
-
-function percentile(array,value){
+function percentile(
+    values,
+    value
+){
 
     const valid =
-        array
-        .filter(Number.isFinite)
-        .sort((a,b)=>a-b);
+        values
+        .filter(
+            x => Number.isFinite(x)
+        )
+        .sort(
+            (a,b) => a-b
+        );
 
     if(!valid.length)
         return 0.5;
 
-    let count = 0;
+    let count=0;
 
-    for(const x of valid){
+    for(
+        const x of valid
+    ){
 
         if(x <= value)
             count++;
+
     }
 
-    return count / valid.length;
+    return count /
+    valid.length;
+
 }
 
 
-async function scan(){
+function change(
+    coin,
+    period
+){
 
-    const limit =
-        Math.min(
-            250,
-            Math.max(
-                20,
-                Number($("limit").value) || 100
-            )
+    const key =
+        "price_change_percentage_" +
+        period +
+        "_in_currency";
+
+    return coin[key] ?? NaN;
+
+}
+
+
+/*
+------------------------------------------------
+CALCULATE SCORE
+------------------------------------------------
+*/
+
+function calculateScore(
+    item,
+    all,
+    target
+){
+
+    const q7 =
+        percentile(
+            all.map(x=>x.r7),
+            item.r7
         );
 
-    const multiplier =
-        Number($("mult").value);
+    const q14 =
+        percentile(
+            all.map(x=>x.r14),
+            item.r14
+        );
+
+    const q30 =
+        percentile(
+            all.map(x=>x.r30),
+            item.r30
+        );
+
+    const q200 =
+        percentile(
+            all.map(x=>x.r200),
+            item.r200
+        );
+
+    const q1 =
+        percentile(
+            all.map(x=>x.r1),
+            item.r1
+        );
+
+
+    /*
+    Momentum
+    */
+
+    const momentum =
+
+        q7  * 0.10 +
+
+        q14 * 0.15 +
+
+        q30 * 0.25 +
+
+        q200 * 0.25 +
+
+        q1 * 0.25;
+
+
+    /*
+    Market-cap izvedivost
+    */
+
+    const targetMarketCap =
+        item.marketCap * target;
+
+
+    const marketCapScore =
+
+        clamp(
+
+            1 -
+
+            (
+                Math.log10(
+                    Math.max(
+                        targetMarketCap,
+                        1
+                    )
+                ) / 13
+            )
+
+        );
+
+
+    /*
+    Likvidnost
+    */
+
+    const liquidity =
+
+        clamp(
+
+            Math.log10(
+                Math.max(
+                    item.volume,
+                    1
+                )
+            ) / 10
+
+        );
+
+
+    /*
+    Volumen u odnosu na market cap
+    */
+
+    const volumeRatio =
+
+        clamp(
+
+            item.volume /
+            Math.max(
+                item.marketCap,
+                1
+            ),
+
+            0,
+            2
+
+        ) / 2;
+
+
+    /*
+    ATH score
+
+    Coin daleko ispod ATH-a
+    nije automatski dobar.
+    Zato je težina ograničena.
+    */
+
+    const athScore =
+
+        clamp(
+
+            1 -
+
+            Math.abs(
+                Math.min(
+                    item.ath,
+                    0
+                )
+            ) / 100
+
+        );
+
+
+    /*
+    FDV penalty
+    */
+
+    let fdvPenalty=0;
+
+    if(item.fdv > 0){
+
+        fdvPenalty =
+
+            clamp(
+
+                (
+                    item.fdv /
+                    item.marketCap
+                    - 1
+                ) / 8
+
+            );
+
+    }
+
+
+    /*
+    Pump penalty
+
+    Ne želimo automatski kupovati
+    ono što je upravo napravilo +300%.
+    */
+
+    let pumpPenalty=0;
+
+    if(item.r7 > 1){
+
+        pumpPenalty =
+
+            clamp(
+                (item.r7-1)/3
+            ) * 0.10;
+
+    }
+
+
+    /*
+    FINAL SCORE
+    */
+
+    item.score =
+
+        100 * (
+
+            momentum * 0.38 +
+
+            marketCapScore * 0.18 +
+
+            volumeRatio * 0.14 +
+
+            liquidity * 0.10 +
+
+            athScore * 0.10 +
+
+            (1-fdvPenalty) * 0.10
+
+        )
+
+        -
+
+        100 * pumpPenalty;
+
+
+    item.score =
+        clamp(
+            item.score,
+            0,
+            100
+        );
+
+}
+
+
+/*
+------------------------------------------------
+SCAN
+------------------------------------------------
+*/
+
+async function scan(){
+
+    const target =
+        Number(
+            $("target").value
+        );
+
+
+    const requested =
+        Number(
+            $("amount").value
+        );
+
+
+    const button =
+        $("scanButton");
+
+
+    button.disabled=true;
+
 
     $("status").textContent =
         "Dohvaćam tržište...";
 
-    $("result").innerHTML =
-        '<div class="card loading">Analiza u tijeku...</div>';
+
+    $("results").innerHTML =
+
+        '<div class="card">' +
+        'Skeniranje u tijeku...' +
+        '</div>';
+
 
     try{
 
-        let coins = [];
+        let coins=[];
 
-        for(let page=1;
-            coins.length<limit;
-            page++){
+
+        const pages =
+            Math.ceil(
+                requested / 250
+            );
+
+
+        /*
+        Dohvati market podatke.
+
+        CoinGecko endpoint može vratiti
+        do 250 coina po zahtjevu.
+        */
+
+        for(
+            let page=1;
+            page<=pages;
+            page++
+        ){
 
             const amount =
                 Math.min(
                     250,
-                    limit-coins.length
+                    requested -
+                    coins.length
                 );
+
+
+            const url =
+
+                API +
+
+                "coins/markets" +
+
+                "?vs_currency=usd" +
+
+                "&order=market_cap_desc" +
+
+                "&per_page=" +
+                amount +
+
+                "&page=" +
+                page +
+
+                "&sparkline=false" +
+
+                "&price_change_percentage=" +
+
+                "7d,14d,30d,200d,1y";
+
 
             const data =
-                await api(
-                    "https://api.coingecko.com/api/v3/coins/markets" +
-                    "?vs_currency=usd" +
-                    "&order=market_cap_desc" +
-                    "&per_page=" + amount +
-                    "&page=" + page +
-                    "&sparkline=false"
-                );
-
-            coins.push(...data);
-
-            if(data.length < amount)
-                break;
-
-            await sleep(1200);
-        }
+                await api(url);
 
 
-        let analysed = [];
-
-
-        for(let i=0;i<coins.length;i++){
-
-            const coin = coins[i];
-
-            try{
-
-                const history =
-                    await api(
-                        "https://api.coingecko.com/api/v3/coins/" +
-                        coin.id +
-                        "/market_chart" +
-                        "?vs_currency=usd" +
-                        "&days=730" +
-                        "&interval=daily"
-                    );
-
-                const prices =
-                    history.prices.map(
-                        x => x[1]
-                    );
-
-                if(prices.length < 120)
-                    continue;
-
-
-                const r30 =
-                    returnN(prices,30);
-
-                const r90 =
-                    returnN(prices,90);
-
-                const r365 =
-                    returnN(
-                        prices,
-                        Math.min(
-                            365,
-                            prices.length-1
-                        )
-                    );
-
-                const drawdown =
-                    maximumDrawdown(prices);
-
-                const vol =
-                    volatility(prices);
-
-                const tr =
-                    trend(prices);
-
-                const recovery =
-                    prices.at(-1) /
-                    Math.max(...prices);
-
-                const marketCap =
-                    coin.market_cap || 0;
-
-                const targetMarketCap =
-                    marketCap * multiplier;
-
-                const volume =
-                    coin.total_volume || 0;
-
-                const liquidity =
-                    Math.min(
-                        1,
-                        Math.log10(
-                            Math.max(volume,1)
-                        ) / 10
-                    );
-
-                /*
-                 * Higher score means smaller market-cap
-                 * hurdle for the selected multiplier.
-                 */
-
-                const feasibility =
-                    Math.max(
-                        0,
-                        Math.min(
-                            1,
-                            1 -
-                            Math.log10(
-                                Math.max(
-                                    targetMarketCap,
-                                    1
-                                )
-                            ) / 12
-                        )
-                    );
-
-
-                analysed.push({
-
-                    coin,
-                    prices,
-
-                    r30,
-                    r90,
-                    r365,
-
-                    drawdown,
-                    vol,
-                    tr,
-                    recovery,
-
-                    marketCap,
-                    targetMarketCap,
-
-                    liquidity,
-                    feasibility
-                });
-
-            }
-            catch(error){
-
-                console.log(
-                    "Skipped",
-                    coin.id,
-                    error
-                );
-            }
+            coins.push(
+                ...data
+            );
 
 
             $("status").textContent =
-                "Analizirano " +
-                (i+1) +
-                "/" +
-                coins.length;
 
-            await sleep(350);
+                "Dohvaćeno " +
+
+                coins.length +
+
+                " / " +
+
+                requested;
+
+
+            if(
+                data.length <
+                amount
+            ){
+
+                break;
+
+            }
+
+
+            await sleep(1500);
+
         }
 
 
         /*
-         * Cross-sectional scoring.
-         */
+        Pripremi podatke.
+        */
 
-        for(const x of analysed){
+        let analysed =
 
-            const rank30 =
-                percentile(
-                    analysed.map(a=>a.r30),
-                    x.r30
-                );
+            coins
 
-            const rank90 =
-                percentile(
-                    analysed.map(a=>a.r90),
-                    x.r90
-                );
+            .filter(
+                coin =>
 
-            const rank365 =
-                percentile(
-                    analysed.map(a=>a.r365),
-                    x.r365
-                );
+                coin.market_cap > 0 &&
 
-            const rankTrend =
-                percentile(
-                    analysed.map(a=>a.tr),
-                    x.tr
-                );
+                coin.current_price > 0
+            )
 
-            const rankRecovery =
-                percentile(
-                    analysed.map(a=>a.recovery),
-                    x.recovery
-                );
+            .map(
+                coin => ({
 
-            const rankLiquidity =
-                percentile(
-                    analysed.map(a=>a.liquidity),
-                    x.liquidity
-                );
+                    coin:coin,
 
-            const rankFeasibility =
-                percentile(
-                    analysed.map(a=>a.feasibility),
-                    x.feasibility
-                );
+                    marketCap:
+                        coin.market_cap,
 
+                    volume:
+                        coin.total_volume || 0,
 
-            /*
-             * Momentum:
-             * 25% 30d
-             * 35% 90d
-             * 40% 365d
-             */
+                    fdv:
+                        coin.fully_diluted_valuation || 0,
 
-            const momentum =
-                0.25 * rank30 +
-                0.35 * rank90 +
-                0.40 * rank365;
+                    ath:
+                        coin.ath_change_percentage ??
+                        NaN,
 
+                    r7:
+                        change(
+                            coin,
+                            "7d"
+                        ),
 
-            let score =
-                25 * momentum +
+                    r14:
+                        change(
+                            coin,
+                            "14d"
+                        ),
 
-                15 * rankTrend +
+                    r30:
+                        change(
+                            coin,
+                            "30d"
+                        ),
 
-                15 * rankRecovery +
+                    r200:
+                        change(
+                            coin,
+                            "200d"
+                        ),
 
-                10 * rankLiquidity +
+                    r1:
+                        change(
+                            coin,
+                            "1y"
+                        )
 
-                10 * rankFeasibility;
+                })
+            );
 
 
-            /*
-             * Penalize extreme historical risk.
-             */
+        /*
+        Izračun scorea.
+        */
 
-            score -=
-                Math.min(
-                    Math.abs(x.drawdown),
-                    0.95
-                ) * 10;
+        analysed.forEach(
+            item =>
 
-
-            score -=
-                Math.min(
-                    x.vol,
-                    3
-                ) * 2;
+            calculateScore(
+                item,
+                analysed,
+                target
+            )
+        );
 
 
-            x.score = score;
-        }
-
+        /*
+        Najbolji prvi.
+        */
 
         analysed.sort(
-            (a,b)=>
-                b.score-a.score
+            (a,b) =>
+                b.score -
+                a.score
+        );
+
+
+        render(
+            analysed.slice(0,25),
+            target,
+            analysed.length
         );
 
 
         $("status").textContent =
-            "Gotovo. Analizirano " +
+
+            "Gotovo — " +
+
             analysed.length +
-            " projekata.";
 
+            " coina analizirano.";
 
-        render(
-            analysed.slice(0,20),
-            multiplier
-        );
 
     }
     catch(error){
 
-        $("status").textContent =
-            "Greška: " +
-            error.message;
+        console.error(error);
 
-        $("result").innerHTML =
-            '<div class="card red">' +
-            'CoinGecko je odbio zahtjev. ' +
-            'Pokušaj ponovno za nekoliko minuta.' +
-            '</div>';
+
+        $("status").innerHTML =
+
+            '<span class="error">' +
+
+            "Greška: " +
+
+            error.message +
+
+            "</span>";
+
+
+        $("results").innerHTML =
+
+            '<div class="card error">' +
+
+            "<b>CoinGecko nije dopustio zahtjev.</b>" +
+
+            "<br><br>" +
+
+            "Mogući razlog je API rate limit." +
+
+            "<br><br>" +
+
+            "Pokušaj ponovno nakon kratkog vremena." +
+
+            "</div>";
+
     }
+
+
+    button.disabled=false;
+
 }
 
 
-function render(list,multiplier){
+/*
+------------------------------------------------
+RENDER
+------------------------------------------------
+*/
+
+function render(
+    list,
+    target,
+    total
+){
 
     if(!list.length){
 
-        $("result").innerHTML =
-            '<div class="card">Nema podataka.</div>';
+        $("results").innerHTML =
+
+            '<div class="card">' +
+
+            "Nema dostupnih podataka." +
+
+            "</div>";
 
         return;
+
     }
 
 
@@ -723,13 +982,23 @@ function render(list,multiplier){
         list[0];
 
 
-    let html = `
+    let html = "";
+
+
+    /*
+    BEST
+    */
+
+    html += `
 
     <div class="card best">
 
         <div class="yellow">
-            NAJBOLJI KANDIDAT PO MODELU
+
+            #1 KANDIDAT ZA ${target}×
+
         </div>
+
 
         <div class="coin">
 
@@ -739,6 +1008,7 @@ function render(list,multiplier){
                     #1
                 </div>
 
+
                 <div class="name">
 
                     <b>
@@ -746,13 +1016,18 @@ function render(list,multiplier){
                     </b>
 
                     <div class="symbol">
+
                         ${best.coin.symbol.toUpperCase()}
+
                     </div>
 
                 </div>
 
+
                 <div class="score">
+
                     ${best.score.toFixed(1)}
+
                 </div>
 
             </div>
@@ -761,28 +1036,89 @@ function render(list,multiplier){
             <div class="grid">
 
                 <div class="metric">
+
                     Market cap
+
                     <b>
                         ${money(best.marketCap)}
                     </b>
+
                 </div>
 
+
                 <div class="metric">
-                    ${multiplier}× market cap
+
+                    ${target}× market cap
+
                     <b>
-                        ${money(best.targetMarketCap)}
+                        ${money(
+                            best.marketCap *
+                            target
+                        )}
                     </b>
+
                 </div>
 
+
                 <div class="metric">
-                    90 dana
+
+                    ATH
+
+                    <b>
+                        ${percent(best.ath)}
+                    </b>
+
+                </div>
+
+
+                <div class="metric">
+
+                    7 dana
+
                     <b class="${
-                        best.r90 >= 0
+                        best.r7 >= 0
                         ? "green"
                         : "red"
                     }">
-                        ${percentage(best.r90)}
+
+                        ${percent(best.r7)}
+
                     </b>
+
+                </div>
+
+
+                <div class="metric">
+
+                    30 dana
+
+                    <b class="${
+                        best.r30 >= 0
+                        ? "green"
+                        : "red"
+                    }">
+
+                        ${percent(best.r30)}
+
+                    </b>
+
+                </div>
+
+
+                <div class="metric">
+
+                    1 godina
+
+                    <b class="${
+                        best.r1 >= 0
+                        ? "green"
+                        : "red"
+                    }">
+
+                        ${percent(best.r1)}
+
+                    </b>
+
                 </div>
 
             </div>
@@ -795,139 +1131,228 @@ function render(list,multiplier){
     <div class="card">
 
         <b>
-            TOP 20 KANDIDATA
+            TOP 25 KANDIDATA
         </b>
+
     `;
 
 
-    list.forEach((x,index)=>{
+    /*
+    TOP 25
+    */
 
-        let warning = "";
+    list.forEach(
+        (item,index) => {
 
-        if(x.targetMarketCap >= 20e9)
-            warning = "Ekstreman market-cap zahtjev";
+            const fdvRatio =
 
-        else if(x.targetMarketCap >= 5e9)
-            warning = "Vrlo zahtjevno";
+                item.fdv > 0
 
-        else if(x.targetMarketCap < 1e9)
-            warning = "Matematički povoljniji 100× cilj";
+                ?
+
+                (
+                    item.fdv /
+                    item.marketCap
+                ).toFixed(2) + "×"
+
+                :
+
+                "—";
 
 
-        html += `
+            html += `
 
-        <div class="coin">
+            <div class="coin">
 
-            <div class="top">
+                <div class="top">
 
-                <div class="rank">
-                    #${index+1}
-                </div>
+                    <div class="rank">
 
-                <div class="name">
+                        #${index+1}
 
-                    <b>
-                        ${x.coin.name}
-                    </b>
+                    </div>
 
-                    <div class="symbol">
 
-                        ${x.coin.symbol.toUpperCase()}
-                        ·
-                        ${money(x.marketCap)}
+                    <div class="name">
+
+                        <b>
+
+                            ${item.coin.name}
+
+                        </b>
+
+
+                        <div class="symbol">
+
+                            ${item.coin.symbol.toUpperCase()}
+
+                            ·
+
+                            ${money(
+                                item.marketCap
+                            )}
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="score">
+
+                        ${item.score.toFixed(1)}
 
                     </div>
 
                 </div>
 
-                <div class="score">
-                    ${x.score.toFixed(1)}
+
+                <div class="grid">
+
+
+                    <div class="metric">
+
+                        7d
+
+                        <b class="${
+                            item.r7 >= 0
+                            ? "green"
+                            : "red"
+                        }">
+
+                            ${percent(
+                                item.r7
+                            )}
+
+                        </b>
+
+                    </div>
+
+
+                    <div class="metric">
+
+                        30d
+
+                        <b class="${
+                            item.r30 >= 0
+                            ? "green"
+                            : "red"
+                        }">
+
+                            ${percent(
+                                item.r30
+                            )}
+
+                        </b>
+
+                    </div>
+
+
+                    <div class="metric">
+
+                        200d
+
+                        <b class="${
+                            item.r200 >= 0
+                            ? "green"
+                            : "red"
+                        }">
+
+                            ${percent(
+                                item.r200
+                            )}
+
+                        </b>
+
+                    </div>
+
+
+                    <div class="metric">
+
+                        1y
+
+                        <b class="${
+                            item.r1 >= 0
+                            ? "green"
+                            : "red"
+                        }">
+
+                            ${percent(
+                                item.r1
+                            )}
+
+                        </b>
+
+                    </div>
+
+
+                    <div class="metric">
+
+                        ${target}× MC
+
+                        <b>
+
+                            ${money(
+                                item.marketCap *
+                                target
+                            )}
+
+                        </b>
+
+                    </div>
+
+
+                    <div class="metric">
+
+                        FDV / MC
+
+                        <b>
+
+                            ${fdvRatio}
+
+                        </b>
+
+                    </div>
+
                 </div>
 
             </div>
 
+            `;
 
-            <div class="grid">
-
-                <div class="metric">
-                    30 dana
-                    <b class="${
-                        x.r30 >= 0
-                        ? "green"
-                        : "red"
-                    }">
-                        ${percentage(x.r30)}
-                    </b>
-                </div>
-
-                <div class="metric">
-                    90 dana
-                    <b class="${
-                        x.r90 >= 0
-                        ? "green"
-                        : "red"
-                    }">
-                        ${percentage(x.r90)}
-                    </b>
-                </div>
-
-                <div class="metric">
-                    365 dana
-                    <b class="${
-                        x.r365 >= 0
-                        ? "green"
-                        : "red"
-                    }">
-                        ${percentage(x.r365)}
-                    </b>
-                </div>
-
-                <div class="metric">
-                    Max drawdown
-                    <b>
-                        ${percentage(x.drawdown)}
-                    </b>
-                </div>
-
-                <div class="metric">
-                    ${multiplier}× market cap
-                    <b>
-                        ${money(x.targetMarketCap)}
-                    </b>
-                </div>
-
-                <div class="metric">
-                    Volatilnost
-                    <b>
-                        ${percentage(x.vol)}
-                    </b>
-                </div>
-
-            </div>
-
-
-            ${
-                warning
-                ?
-                `<div class="warning" style="margin-top:8px">
-                    ${warning}
-                </div>`
-                :
-                ""
-            }
-
-        </div>
-        `;
-    });
+        }
+    );
 
 
     html += `
-        </div>
+
+    </div>
+
+
+    <div class="card note">
+
+        Analizirano:
+
+        <b>
+            ${total}
+        </b>
+
+        coina.
+
+        <br><br>
+
+        Score je rang modela, a ne
+        postotak vjerojatnosti.
+        Visoki score ne znači da će
+        coin dosegnuti cilj.
+
+    </div>
+
     `;
 
 
-    $("result").innerHTML =
+    $("results").innerHTML =
         html;
+
 }
 
 </script>
