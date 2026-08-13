@@ -1,1 +1,936 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Crypto 100X Scanner</title>
 
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    background:#090b10;
+    color:#f5f7fa;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+
+.wrap{
+    max-width:760px;
+    margin:auto;
+    padding:20px 14px 50px;
+}
+
+h1{
+    margin:0;
+    font-size:28px;
+}
+
+.subtitle{
+    color:#9299a7;
+    font-size:13px;
+    margin-top:5px;
+    margin-bottom:18px;
+}
+
+.card{
+    background:#141820;
+    border:1px solid #272d38;
+    border-radius:16px;
+    padding:15px;
+    margin:12px 0;
+}
+
+.controls{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+}
+
+input,select,button{
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #343b49;
+    background:#0e1219;
+    color:#fff;
+    font-size:15px;
+}
+
+button{
+    grid-column:1/-1;
+    background:#fff;
+    color:#000;
+    border:0;
+    font-weight:800;
+}
+
+.status{
+    margin-top:10px;
+    color:#9ca3af;
+    font-size:12px;
+}
+
+.coin{
+    border-top:1px solid #272d38;
+    padding:14px 0;
+}
+
+.coin:first-child{
+    border-top:0;
+}
+
+.top{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.rank{
+    width:32px;
+    font-size:20px;
+    font-weight:800;
+}
+
+.name{
+    flex:1;
+}
+
+.symbol{
+    color:#8e96a5;
+    font-size:12px;
+    margin-top:2px;
+}
+
+.score{
+    font-size:19px;
+    font-weight:800;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:7px;
+    margin-top:10px;
+}
+
+.metric{
+    background:#0e1219;
+    border-radius:9px;
+    padding:8px;
+    color:#929aa8;
+    font-size:11px;
+}
+
+.metric b{
+    display:block;
+    color:#fff;
+    font-size:13px;
+    margin-top:3px;
+}
+
+.green{
+    color:#6ee7b7!important;
+}
+
+.red{
+    color:#fb7185!important;
+}
+
+.yellow{
+    color:#fbbf24!important;
+}
+
+.loading{
+    text-align:center;
+    padding:25px;
+    color:#a4acba;
+}
+
+.warning{
+    color:#fbbf24;
+    font-size:12px;
+    line-height:1.45;
+}
+
+.best{
+    border:1px solid #596d36;
+}
+
+@media(max-width:430px){
+    .grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+<h1>Crypto 100× Scanner</h1>
+
+<div class="subtitle">
+Automatski traži kriptovalute s najboljim omjerom potencijalnog upsidea i povijesnih karakteristika.
+</div>
+
+<div class="card">
+
+<div class="controls">
+
+<input
+id="limit"
+type="number"
+min="20"
+max="250"
+value="100"
+placeholder="Broj coinova">
+
+<select id="mult">
+<option value="10">Cilj 10×</option>
+<option value="50">Cilj 50×</option>
+<option value="100" selected>Cilj 100×</option>
+</select>
+
+<button onclick="scan()">
+SKENIRAJ TRŽIŠTE
+</button>
+
+</div>
+
+<div id="status" class="status">
+Spremno za skeniranje.
+</div>
+
+</div>
+
+<div id="result"></div>
+
+<div class="card warning">
+
+<b>Važno</b><br><br>
+
+Score nije vjerojatnost da će coin napraviti 100×.
+Model uspoređuje povijesni momentum, trend, drawdown,
+volatilnost, oporavak od ATH-a, volumen i market cap.
+
+100× zahtijeva približno 100× veći market cap.
+
+</div>
+
+</div>
+
+<script>
+
+const $ = id => document.getElementById(id);
+
+const sleep = ms =>
+    new Promise(resolve => setTimeout(resolve,ms));
+
+
+async function api(url){
+
+    const response = await fetch(url);
+
+    if(!response.ok){
+        throw new Error("CoinGecko API: " + response.status);
+    }
+
+    return response.json();
+}
+
+
+function percentage(value){
+
+    if(!Number.isFinite(value))
+        return "—";
+
+    return (value * 100).toFixed(1) + "%";
+}
+
+
+function money(value){
+
+    if(!Number.isFinite(value))
+        return "—";
+
+    if(value >= 1e12)
+        return "$" + (value/1e12).toFixed(2) + "T";
+
+    if(value >= 1e9)
+        return "$" + (value/1e9).toFixed(2) + "B";
+
+    if(value >= 1e6)
+        return "$" + (value/1e6).toFixed(1) + "M";
+
+    if(value >= 1e3)
+        return "$" + (value/1e3).toFixed(1) + "K";
+
+    return "$" + value.toFixed(2);
+}
+
+
+function returnN(prices,n){
+
+    if(prices.length <= n)
+        return NaN;
+
+    return prices[prices.length-1] /
+           prices[prices.length-1-n] - 1;
+}
+
+
+function maximumDrawdown(prices){
+
+    let peak = prices[0];
+    let drawdown = 0;
+
+    for(const price of prices){
+
+        peak = Math.max(peak,price);
+
+        drawdown =
+            Math.min(
+                drawdown,
+                price / peak - 1
+            );
+    }
+
+    return drawdown;
+}
+
+
+function volatility(prices){
+
+    if(prices.length < 20)
+        return NaN;
+
+    const returns = [];
+
+    for(let i=1;i<prices.length;i++){
+
+        returns.push(
+            Math.log(
+                prices[i] / prices[i-1]
+            )
+        );
+    }
+
+    const mean =
+        returns.reduce((a,b)=>a+b,0) /
+        returns.length;
+
+    const variance =
+        returns.reduce(
+            (sum,x)=>sum+(x-mean)**2,
+            0
+        ) /
+        (returns.length-1);
+
+    return Math.sqrt(variance*365);
+}
+
+
+function ema(prices,period){
+
+    const multiplier =
+        2/(period+1);
+
+    let value = prices[0];
+
+    for(let i=1;i<prices.length;i++){
+
+        value =
+            prices[i]*multiplier +
+            value*(1-multiplier);
+    }
+
+    return value;
+}
+
+
+function trend(prices){
+
+    if(prices.length < 120)
+        return NaN;
+
+    const data =
+        prices.slice(-120);
+
+    const fast =
+        ema(data,30);
+
+    const slow =
+        ema(data,120);
+
+    return fast/slow - 1;
+}
+
+
+function percentile(array,value){
+
+    const valid =
+        array
+        .filter(Number.isFinite)
+        .sort((a,b)=>a-b);
+
+    if(!valid.length)
+        return 0.5;
+
+    let count = 0;
+
+    for(const x of valid){
+
+        if(x <= value)
+            count++;
+    }
+
+    return count / valid.length;
+}
+
+
+async function scan(){
+
+    const limit =
+        Math.min(
+            250,
+            Math.max(
+                20,
+                Number($("limit").value) || 100
+            )
+        );
+
+    const multiplier =
+        Number($("mult").value);
+
+    $("status").textContent =
+        "Dohvaćam tržište...";
+
+    $("result").innerHTML =
+        '<div class="card loading">Analiza u tijeku...</div>';
+
+    try{
+
+        let coins = [];
+
+        for(let page=1;
+            coins.length<limit;
+            page++){
+
+            const amount =
+                Math.min(
+                    250,
+                    limit-coins.length
+                );
+
+            const data =
+                await api(
+                    "https://api.coingecko.com/api/v3/coins/markets" +
+                    "?vs_currency=usd" +
+                    "&order=market_cap_desc" +
+                    "&per_page=" + amount +
+                    "&page=" + page +
+                    "&sparkline=false"
+                );
+
+            coins.push(...data);
+
+            if(data.length < amount)
+                break;
+
+            await sleep(1200);
+        }
+
+
+        let analysed = [];
+
+
+        for(let i=0;i<coins.length;i++){
+
+            const coin = coins[i];
+
+            try{
+
+                const history =
+                    await api(
+                        "https://api.coingecko.com/api/v3/coins/" +
+                        coin.id +
+                        "/market_chart" +
+                        "?vs_currency=usd" +
+                        "&days=730" +
+                        "&interval=daily"
+                    );
+
+                const prices =
+                    history.prices.map(
+                        x => x[1]
+                    );
+
+                if(prices.length < 120)
+                    continue;
+
+
+                const r30 =
+                    returnN(prices,30);
+
+                const r90 =
+                    returnN(prices,90);
+
+                const r365 =
+                    returnN(
+                        prices,
+                        Math.min(
+                            365,
+                            prices.length-1
+                        )
+                    );
+
+                const drawdown =
+                    maximumDrawdown(prices);
+
+                const vol =
+                    volatility(prices);
+
+                const tr =
+                    trend(prices);
+
+                const recovery =
+                    prices.at(-1) /
+                    Math.max(...prices);
+
+                const marketCap =
+                    coin.market_cap || 0;
+
+                const targetMarketCap =
+                    marketCap * multiplier;
+
+                const volume =
+                    coin.total_volume || 0;
+
+                const liquidity =
+                    Math.min(
+                        1,
+                        Math.log10(
+                            Math.max(volume,1)
+                        ) / 10
+                    );
+
+                /*
+                 * Higher score means smaller market-cap
+                 * hurdle for the selected multiplier.
+                 */
+
+                const feasibility =
+                    Math.max(
+                        0,
+                        Math.min(
+                            1,
+                            1 -
+                            Math.log10(
+                                Math.max(
+                                    targetMarketCap,
+                                    1
+                                )
+                            ) / 12
+                        )
+                    );
+
+
+                analysed.push({
+
+                    coin,
+                    prices,
+
+                    r30,
+                    r90,
+                    r365,
+
+                    drawdown,
+                    vol,
+                    tr,
+                    recovery,
+
+                    marketCap,
+                    targetMarketCap,
+
+                    liquidity,
+                    feasibility
+                });
+
+            }
+            catch(error){
+
+                console.log(
+                    "Skipped",
+                    coin.id,
+                    error
+                );
+            }
+
+
+            $("status").textContent =
+                "Analizirano " +
+                (i+1) +
+                "/" +
+                coins.length;
+
+            await sleep(350);
+        }
+
+
+        /*
+         * Cross-sectional scoring.
+         */
+
+        for(const x of analysed){
+
+            const rank30 =
+                percentile(
+                    analysed.map(a=>a.r30),
+                    x.r30
+                );
+
+            const rank90 =
+                percentile(
+                    analysed.map(a=>a.r90),
+                    x.r90
+                );
+
+            const rank365 =
+                percentile(
+                    analysed.map(a=>a.r365),
+                    x.r365
+                );
+
+            const rankTrend =
+                percentile(
+                    analysed.map(a=>a.tr),
+                    x.tr
+                );
+
+            const rankRecovery =
+                percentile(
+                    analysed.map(a=>a.recovery),
+                    x.recovery
+                );
+
+            const rankLiquidity =
+                percentile(
+                    analysed.map(a=>a.liquidity),
+                    x.liquidity
+                );
+
+            const rankFeasibility =
+                percentile(
+                    analysed.map(a=>a.feasibility),
+                    x.feasibility
+                );
+
+
+            /*
+             * Momentum:
+             * 25% 30d
+             * 35% 90d
+             * 40% 365d
+             */
+
+            const momentum =
+                0.25 * rank30 +
+                0.35 * rank90 +
+                0.40 * rank365;
+
+
+            let score =
+                25 * momentum +
+
+                15 * rankTrend +
+
+                15 * rankRecovery +
+
+                10 * rankLiquidity +
+
+                10 * rankFeasibility;
+
+
+            /*
+             * Penalize extreme historical risk.
+             */
+
+            score -=
+                Math.min(
+                    Math.abs(x.drawdown),
+                    0.95
+                ) * 10;
+
+
+            score -=
+                Math.min(
+                    x.vol,
+                    3
+                ) * 2;
+
+
+            x.score = score;
+        }
+
+
+        analysed.sort(
+            (a,b)=>
+                b.score-a.score
+        );
+
+
+        $("status").textContent =
+            "Gotovo. Analizirano " +
+            analysed.length +
+            " projekata.";
+
+
+        render(
+            analysed.slice(0,20),
+            multiplier
+        );
+
+    }
+    catch(error){
+
+        $("status").textContent =
+            "Greška: " +
+            error.message;
+
+        $("result").innerHTML =
+            '<div class="card red">' +
+            'CoinGecko je odbio zahtjev. ' +
+            'Pokušaj ponovno za nekoliko minuta.' +
+            '</div>';
+    }
+}
+
+
+function render(list,multiplier){
+
+    if(!list.length){
+
+        $("result").innerHTML =
+            '<div class="card">Nema podataka.</div>';
+
+        return;
+    }
+
+
+    const best =
+        list[0];
+
+
+    let html = `
+
+    <div class="card best">
+
+        <div class="yellow">
+            NAJBOLJI KANDIDAT PO MODELU
+        </div>
+
+        <div class="coin">
+
+            <div class="top">
+
+                <div class="rank">
+                    #1
+                </div>
+
+                <div class="name">
+
+                    <b>
+                        ${best.coin.name}
+                    </b>
+
+                    <div class="symbol">
+                        ${best.coin.symbol.toUpperCase()}
+                    </div>
+
+                </div>
+
+                <div class="score">
+                    ${best.score.toFixed(1)}
+                </div>
+
+            </div>
+
+
+            <div class="grid">
+
+                <div class="metric">
+                    Market cap
+                    <b>
+                        ${money(best.marketCap)}
+                    </b>
+                </div>
+
+                <div class="metric">
+                    ${multiplier}× market cap
+                    <b>
+                        ${money(best.targetMarketCap)}
+                    </b>
+                </div>
+
+                <div class="metric">
+                    90 dana
+                    <b class="${
+                        best.r90 >= 0
+                        ? "green"
+                        : "red"
+                    }">
+                        ${percentage(best.r90)}
+                    </b>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <b>
+            TOP 20 KANDIDATA
+        </b>
+    `;
+
+
+    list.forEach((x,index)=>{
+
+        let warning = "";
+
+        if(x.targetMarketCap >= 20e9)
+            warning = "Ekstreman market-cap zahtjev";
+
+        else if(x.targetMarketCap >= 5e9)
+            warning = "Vrlo zahtjevno";
+
+        else if(x.targetMarketCap < 1e9)
+            warning = "Matematički povoljniji 100× cilj";
+
+
+        html += `
+
+        <div class="coin">
+
+            <div class="top">
+
+                <div class="rank">
+                    #${index+1}
+                </div>
+
+                <div class="name">
+
+                    <b>
+                        ${x.coin.name}
+                    </b>
+
+                    <div class="symbol">
+
+                        ${x.coin.symbol.toUpperCase()}
+                        ·
+                        ${money(x.marketCap)}
+
+                    </div>
+
+                </div>
+
+                <div class="score">
+                    ${x.score.toFixed(1)}
+                </div>
+
+            </div>
+
+
+            <div class="grid">
+
+                <div class="metric">
+                    30 dana
+                    <b class="${
+                        x.r30 >= 0
+                        ? "green"
+                        : "red"
+                    }">
+                        ${percentage(x.r30)}
+                    </b>
+                </div>
+
+                <div class="metric">
+                    90 dana
+                    <b class="${
+                        x.r90 >= 0
+                        ? "green"
+                        : "red"
+                    }">
+                        ${percentage(x.r90)}
+                    </b>
+                </div>
+
+                <div class="metric">
+                    365 dana
+                    <b class="${
+                        x.r365 >= 0
+                        ? "green"
+                        : "red"
+                    }">
+                        ${percentage(x.r365)}
+                    </b>
+                </div>
+
+                <div class="metric">
+                    Max drawdown
+                    <b>
+                        ${percentage(x.drawdown)}
+                    </b>
+                </div>
+
+                <div class="metric">
+                    ${multiplier}× market cap
+                    <b>
+                        ${money(x.targetMarketCap)}
+                    </b>
+                </div>
+
+                <div class="metric">
+                    Volatilnost
+                    <b>
+                        ${percentage(x.vol)}
+                    </b>
+                </div>
+
+            </div>
+
+
+            ${
+                warning
+                ?
+                `<div class="warning" style="margin-top:8px">
+                    ${warning}
+                </div>`
+                :
+                ""
+            }
+
+        </div>
+        `;
+    });
+
+
+    html += `
+        </div>
+    `;
+
+
+    $("result").innerHTML =
+        html;
+}
+
+</script>
+
+</body>
+</html>
